@@ -1,2 +1,2 @@
-import './bootstrap.less';
+import './bgetem.less';
 import './bgetem.css';

@@ -1,5 +1,26 @@
 var path = require('path')
 var webpack = require('webpack')
+const ExtractTextPlugin = require("extract-text-webpack-plugin")
+
+const extractCSS = new ExtractTextPlugin({
+  filename: 'bgetem.css',
+  disable: process.env.NODE_ENV === "development"
+});
+const extractLESS = new ExtractTextPlugin({
+  filename: 'bgetem_less.css',
+  disable: process.env.NODE_ENV === "development"});
+
+
+var isDev = function () {
+  console.log(process.env.NODE_ENV)
+  if (process.env.NODE_ENV === 'production') {
+    return true
+  }
+  else {
+    return false
+  }
+}
+
 
 module.exports = {
   entry: './src/main.js',
@@ -10,31 +31,27 @@ module.exports = {
   },
   module: {
     rules: [
-    { test: /\.(png|woff|woff2|eot|ttf|svg)$/ ,
-          loader: 'url-loader?limit=100000' 
-    },
+      {
+        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+        loader: 'url-loader?limit=100000'
+      },
       {
         test: /\.css$/,
-        use: [ 'style-loader', 'css-loader' ]
+        //use: ['style-loader', 'css-loader']
+        //use: isDev ? ['style-loader', 'css-loader'] 
+        use: extractCSS.extract({use: ['css-loader'], fallback: 'style-loader'}) 
       },
       {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /node_modules/
       },
+
       {
-            test: /\.less$/,
-            use: [{
-                loader: "style-loader"
-            }, {
-                loader: "css-loader"
-            }, {
-                loader: "less-loader", options: {
-                    strictMath: true,
-                    noIeCompat: true
-                }
-            }]
-        },
+        test: /\.less$/,
+        use: extractLESS.extract({use: [ 'css-loader', 'less-loader' ], fallback: 'style-loader'})
+      },
+
       {
         test: /\.(png|jpg|gif|svg)$/,
         loader: 'file-loader',
@@ -46,12 +63,16 @@ module.exports = {
   },
   devServer: {
     historyApiFallback: true,
-    noInfo: false 
+    noInfo: false
   },
   performance: {
     hints: false
   },
-  devtool: '#eval-source-map'
+  devtool: '#eval-source-map',
+  plugins: [
+    extractCSS,
+    extractLESS
+  ]
 }
 
 if (process.env.NODE_ENV === 'production') {
