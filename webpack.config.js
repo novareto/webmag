@@ -1,6 +1,7 @@
 var path = require('path')
 var webpack = require('webpack')
 const ExtractTextPlugin = require("extract-text-webpack-plugin")
+var HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const extractCSS = new ExtractTextPlugin({
   filename: 'bgetem.css',
@@ -9,17 +10,6 @@ const extractCSS = new ExtractTextPlugin({
 const extractLESS = new ExtractTextPlugin({
   filename: 'bgetem_less.css',
   disable: process.env.NODE_ENV === "development"});
-
-
-var isDev = function () {
-  console.log(process.env.NODE_ENV)
-  if (process.env.NODE_ENV === 'production') {
-    return true
-  }
-  else {
-    return false
-  }
-}
 
 
 module.exports = {
@@ -71,7 +61,8 @@ module.exports = {
   devtool: '#eval-source-map',
   plugins: [
     extractCSS,
-    extractLESS
+    extractLESS,
+    new HtmlWebpackPlugin()
   ]
 }
 
