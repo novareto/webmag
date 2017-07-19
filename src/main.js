@@ -1,3 +1,2 @@
-console.log('test')
 import './bootstrap.less';
-alert('EGON')
+import './bgetem.css';
